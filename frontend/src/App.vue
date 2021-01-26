@@ -1,56 +1,30 @@
 <template>
   <div id="app">
-    
-    <form>
-      <div class="form-group row">
-        <input type="date" class="form-control col-3 mx-2" name="Date from" v-model="date_from">
-        <input type="date" class="form-control col-3 mx-2" name="Date to" v-model="date_to">
-        <button type="submit" @click.stop.prevent="submit()">Show Rates</button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Rates API</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <router-link class="nav-link" to="/">Home</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class=nav-link to="/rates">Rates</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class=nav-link to="/rates_by_date">Rates by date</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class=nav-link to="/single_date">Single day rate</router-link>
+          </li>
+        </ul>
       </div>
-    </form>
-    
-    
-    
-    <table class="table">
-      <thead>
-        <th>Date</th>
-        <th>Interpolated</th>
-        <th>Rate</th>
-      </thead>
-      <tbody>
-        <tr v-for="rate in rates" :key="rate.date">
-          <td>{{ rate.date }}</td>
-          <td>{{ rate.rate }}</td>
-          <td>{{ rate.interpolated }}</td>
-        </tr>
-      </tbody>
-    </table>
-
+    </nav>
+    <router-view/>
   </div>
 </template>
-
-<script>
-
-export default {
-  name: 'App',
-  data(){
-    return {
-      date_from: null,
-      date_to: null,
-      rates: []
-    } 
-  },
-  methods:{
-    submit(){
-      this.$router.push("http://localhost:8000/rates/"+this.date_from+'/'+this.date_to)
-    }
-  },
-  async created(){
-    var response = await fetch('http://localhost:8000/rates/');
-    this.rates = await response.json();
-  }
-}
-</script>
 
 <style>
 #app {
@@ -59,6 +33,18 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
