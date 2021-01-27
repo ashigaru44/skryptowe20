@@ -1,5 +1,5 @@
 <template>
-  <div class="rates col-10 mx-auto mt-5">
+  <div class="rates col-10 mx-auto mt-5">    
     <form @submit.prevent>
       <div class="form-group row">
         <input type="date" class="form-control col-3 mx-2" name="Date from" v-model="date_from">
@@ -8,6 +8,8 @@
       </div>
     </form>
     
+    <Chart :chartdata="this.data_collection" :options="options" chartLabel="label" v-if="data_collection !== null"/>
+
     <table class="table">
       <thead>
         <th>Date</th>
@@ -30,7 +32,7 @@
 </template>
 
 <script>
-// import { Bar } from 'vue-chartjs'
+import Chart from "./Chart"
 
 export default {
   // extends: Bar,
@@ -40,19 +42,69 @@ export default {
   name: 'App',
   data(){
     return {
+      
       date_from: null,
       date_to: null,
       rates: [],
+      data_collection: null,
       // data = {
       //   labels: rates.
       // }
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+              yAxes: [{
+                  scaleLabel: {
+                      display: true,
+                      labelString: ""
+                  },
+                  ticks: {
+                    maxTicksLimit: 10,
+                    autoSkip: true
+                  }
+              }],
+              xAxes: [{
+                  scaleLabel: {
+                      display: true,
+                      label: "",
+                  },
+                  ticks: {
+                    maxTicksLimit: 10,
+                    autoSkip: true
+                  }
+              }]
+          }
+        },
     } 
+  },
+  components: {
+    Chart
   },
   methods:{
   async get_rates_by_date(){
-    var response = await fetch('http://localhost:8000/rates/'+ this.date_from +'/'+ this.date_to);
-    this.rates = await response.json();
+    var response = await fetch('http://localhost:8000/rates/'+ this.date_from +'/'+ this.date_to)
+    this.rates = await response.json()
+    this.fill_data()
+  },
+  fill_data() {
+    let rates = [];
+    let dates = [];
+    for (var i = 0; i < this.rates.length; i++) {
+      rates.push(this.rates[i].rate)
+      dates.push(this.rates[i].date)
+    }
+    this.options.scales.yAxes[0].scaleLabel.labelString = "Rate";
+    this.options.scales.xAxes[0].scaleLabel.labelString = "Date";
+    this.data_collection = {
+      labels: dates,
+      datasets: [{
+        label: "USD Exchange rates",
+        data: rates,
+        fill: false,
+      }]
+    }
   }
-  }
+}
 }
 </script>
