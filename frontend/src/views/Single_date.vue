@@ -25,31 +25,27 @@
         </tr>
       </tbody>
     </table>  
+    <span class="font-weight-bold" v-if="this.rates.length == 0 && btn_pressed">Wrong date entered, please enter correct date! </span>
   </div>
 </template>
 
 <script>
-// import { Bar } from 'vue-chartjs'
 
 export default {
-  // extends: Bar,
-  // mounted () {
-  //   this.renderChar(data, options)
-  // },
+
   name: 'App',
   data(){
     return {
       day_date: null, 
       rates: [],
-      // data = {
-      //   labels: rates.
-      // }
+      btn_pressed: false
     } 
   },
   methods:{
   async get_rates_by_date(){
     var response = await fetch('http://localhost:8000/volume/'+ this.day_date);
     this.rates = await response.json();
+    this.btn_pressed = true
   }
   }
 }

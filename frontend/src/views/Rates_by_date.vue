@@ -5,10 +5,11 @@
         <input type="date" class="form-control col-3 mx-2" name="Date from" v-model="date_from">
         <input type="date" class="form-control col-3 mx-2" name="Date to" v-model="date_to">
         <button type="submit" @click="get_rates_by_date()">Show Rates</button>
+        <button class="float-right" type="button" @click="change_chart_mode()">Show Chart</button>
       </div>
     </form>
-    
-    <Chart :chartdata="this.data_collection" :options="options" chartLabel="label" v-if="data_collection !== null"/>
+
+    <Chart :chartdata="this.data_collection" :options="options" chartLabel="label" v-if="this.rates.length > 0 && show_chart == true"/>
 
     <table class="table">
       <thead>
@@ -28,6 +29,7 @@
         </tr>
       </tbody>
     </table>  
+    <span class="font-weight-bold" v-if="this.rates.length == 0 && btn_pressed">Wrong dates entered, please enter correct dates! </span>
   </div>
 </template>
 
@@ -42,11 +44,12 @@ export default {
   name: 'App',
   data(){
     return {
-      
+      btn_pressed: false,
       date_from: null,
       date_to: null,
       rates: [],
       data_collection: null,
+      show_chart: false,
       // data = {
       //   labels: rates.
       // }
@@ -57,20 +60,18 @@ export default {
               yAxes: [{
                   scaleLabel: {
                       display: true,
-                      labelString: ""
                   },
                   ticks: {
-                    maxTicksLimit: 10,
+                    maxTicksLimit: 12,
                     autoSkip: true
                   }
               }],
               xAxes: [{
                   scaleLabel: {
                       display: true,
-                      label: "",
                   },
                   ticks: {
-                    maxTicksLimit: 10,
+                    maxTicksLimit: 12,
                     autoSkip: true
                   }
               }]
@@ -84,7 +85,9 @@ export default {
   methods:{
   async get_rates_by_date(){
     var response = await fetch('http://localhost:8000/rates/'+ this.date_from +'/'+ this.date_to)
+    this.btn_pressed = true
     this.rates = await response.json()
+    console.log(this.rates.length)
     this.fill_data()
   },
   fill_data() {
@@ -99,10 +102,19 @@ export default {
     this.data_collection = {
       labels: dates,
       datasets: [{
-        label: "USD Exchange rates",
+        label: "USD to PLN",
         data: rates,
         fill: false,
+        pointBackgroundColor: "#FF0000",
+        borderColor: "#B7B7B7"
       }]
+    }
+  },
+  change_chart_mode() {
+    if (this.show_chart) {
+      this.show_chart = false
+    }else{
+      this.show_chart = true
     }
   }
 }

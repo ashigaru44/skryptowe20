@@ -1,18 +1,8 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="home rates col-4 mx-auto mt-5">
+        <h1>API Stock Exchange</h1>
+        <p class="lead">API shows exchange rates for USD/PLN pair.<br> This site is connected with API deployed in Django REST framework</p>
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
-}
-</script>
